@@ -1,0 +1,164 @@
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts             Account[]
+  sessions             Session[]
+  profile              Profile?
+  connectionsInitiated Connection[] @relation("Requester")
+  connectionsReceived  Connection[] @relation("Recipient")
+  messages             Message[]
+  reportsFiled         Report[]     @relation("Reporter")
+  reportsReceived      Report[]     @relation("Reported")
+}
+
+model Profile {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  displayName       String
+  age               Int
+  bio               String?
+  broadLocation     String?
+  visibility        String   @default("public")
+  relationshipGoals String?
+  profileCompletion Int      @default(0)
+
+  user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interests            Interest[]
+  personalityResponses PersonalityResponse[]
+  preferences          Preference?
+}
+
+model Interest {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  profiles Profile[]
+}
+
+model PersonalityResponse {
+  id        String  @id @default(cuid())
+  profileId String
+  question  String
+  answer    String
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Preference {
+  id                 String @id @default(cuid())
+  profileId          String @unique
+  minAge             Int    @default(18)
+  maxAge             Int    @default(99)
+  discoveryDistance  Int    @default(50)
+  visibilitySettings String @default("standard")
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Connection {
+  id          String   @id @default(cuid())
+  requesterId String
+  recipientId String
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  requester      User            @relation("Requester", fields: [requesterId], references: [id], onDelete: Cascade)
+  recipient      User            @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  messages       Message[]
+  revealRequests RevealRequest[]
+  voiceDates      VoiceDate[]
+
+  @@unique([requesterId, recipientId])
+}
+
+model Message {
+  id               String   @id @default(cuid())
+  connectionId     String
+  senderId         String
+  content          String
+  createdAt        DateTime @default(now())
+  moderationStatus String   @default("clean")
+
+  connection Connection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  sender     User       @relation(fields: [senderId], references: [id], onDelete: Cascade)
+}
+
+model RevealRequest {
+  id              String   @id @default(cuid())
+  connectionId    String
+  requesterId     String
+  requestedFields String
+  status          String   @default("pending")
+  createdAt       DateTime @default(now())
+
+  connection Connection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+}
+
+model Report {
+  id             String   @id @default(cuid())
+  reporterId     String
+  reportedUserId String
+  reason         String
+  status         String   @default("open")
+  createdAt      DateTime @default(now())
+
+  reporter User @relation("Reporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  reported User @relation("Reported", fields: [reportedUserId], references: [id], onDelete: Cascade)
+}
+
+model VoiceDate {
+  id           String   @id @default(cuid())
+  connectionId String
+  scheduledAt  DateTime
+  status       String   @default("scheduled")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  connection Connection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+
+  @@index([connectionId])
+  @@index([scheduledAt])
+}
