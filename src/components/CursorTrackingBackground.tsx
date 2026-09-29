@@ -4,42 +4,30 @@ import { useEffect, useRef } from "react";
 
 export function CursorTrackingBackground() {
   const stageRef = useRef<HTMLDivElement>(null);
-  const labelRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const stage = stageRef.current;
-    const label = labelRef.current;
-    if (!stage || !label || window.matchMedia("(pointer: coarse)").matches) return;
+    if (!stage || window.matchMedia("(pointer: coarse)").matches) return;
 
-    let tx = window.innerWidth / 2;
-    let ty = window.innerHeight / 2;
+    let tx = window.innerWidth * 0.5;
+    let ty = window.innerHeight * 0.42;
     let x = tx;
     let y = ty;
-    let fx = tx;
-    let fy = ty;
-    let px = tx;
-    let py = ty;
+    let sx = tx;
+    let sy = ty;
     let frame = 0;
 
     const tick = () => {
-      x += (tx - x) * 0.38;
-      y += (ty - y) * 0.38;
-      fx += (tx - fx) * 0.14;
-      fy += (ty - fy) * 0.14;
+      x += (tx - x) * 0.085;
+      y += (ty - y) * 0.085;
+      sx += (tx - sx) * 0.042;
+      sy += (ty - sy) * 0.042;
 
-      const dx = x - px;
-      const dy = y - py;
-      const speed = Math.min(Math.hypot(dx, dy), 28);
-      const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-      px = x;
-      py = y;
+      stage.style.setProperty("--aurora-x", `${x}px`);
+      stage.style.setProperty("--aurora-y", `${y}px`);
+      stage.style.setProperty("--aurora-soft-x", `${sx}px`);
+      stage.style.setProperty("--aurora-soft-y", `${sy}px`);
 
-      stage.style.setProperty("--cx", `${x}px`);
-      stage.style.setProperty("--cy", `${y}px`);
-      stage.style.setProperty("--fx", `${fx}px`);
-      stage.style.setProperty("--fy", `${fy}px`);
-      stage.style.setProperty("--angle", `${angle}deg`);
-      stage.style.setProperty("--stretch", `${1 + speed * .018}`);
       frame = requestAnimationFrame(tick);
     };
 
@@ -50,42 +38,34 @@ export function CursorTrackingBackground() {
       stage.dataset.active = "true";
     };
 
-    const over = (event: PointerEvent) => {
-      const target = event.target instanceof Element ? event.target.closest("a,button,input,textarea,[role='button']") : null;
-      stage.dataset.interactive = target ? "true" : "false";
-      label.textContent = target?.getAttribute("data-cursor-label") ?? (target ? "OPEN" : "");
+    const leave = () => {
+      stage.dataset.active = "false";
     };
 
-    const down = () => { stage.dataset.pressed = "true"; };
-    const up = () => { stage.dataset.pressed = "false"; };
-    const leave = () => { stage.dataset.active = "false"; };
+    const enter = () => {
+      stage.dataset.active = "true";
+    };
 
     window.addEventListener("pointermove", move, { passive: true });
-    window.addEventListener("pointerover", over, { passive: true });
-    window.addEventListener("pointerdown", down, { passive: true });
-    window.addEventListener("pointerup", up, { passive: true });
     document.documentElement.addEventListener("mouseleave", leave);
+    document.documentElement.addEventListener("mouseenter", enter);
 
     stage.dataset.active = "true";
-    stage.dataset.interactive = "false";
-    stage.dataset.pressed = "false";
     frame = requestAnimationFrame(tick);
 
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener("pointermove", move);
-      window.removeEventListener("pointerover", over);
-      window.removeEventListener("pointerdown", down);
-      window.removeEventListener("pointerup", up);
       document.documentElement.removeEventListener("mouseleave", leave);
+      document.documentElement.removeEventListener("mouseenter", enter);
     };
   }, []);
 
   return (
     <div ref={stageRef} aria-hidden="true" className="mystery-cursor-stage">
-      <div className="mystery-cursor-wash" />
-      <div className="mystery-cursor-follow"><span ref={labelRef} /></div>
-      <div className="mystery-cursor-core" />
+      <div className="mystery-aurora mystery-aurora-primary" />
+      <div className="mystery-aurora mystery-aurora-secondary" />
+      <div className="mystery-aurora mystery-aurora-haze" />
     </div>
   );
 }

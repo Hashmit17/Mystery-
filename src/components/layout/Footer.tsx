@@ -1,29 +1,36 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { Heart, Sparkles } from "lucide-react";
 
 export function Footer() {
   return (
     <footer className="px-4 pb-6 pt-8 md:px-6">
-      <div className="mx-auto max-w-[1500px] overflow-hidden rounded-[38px] bg-[#161616] px-6 pb-6 pt-10 text-[#f5f0e7] md:px-9 md:pt-12">
-        <div className="grid gap-10 border-b border-white/15 pb-10 md:grid-cols-[1.4fr_.6fr]">
+      <div className="mx-auto max-w-[1400px] overflow-hidden rounded-[38px] bg-[#4a3945] px-6 pb-7 pt-10 text-[#fff9f7] shadow-[0_24px_70px_rgba(75,55,68,.14)] md:px-10 md:pt-12">
+        <div className="grid gap-10 border-b border-white/12 pb-10 md:grid-cols-[1.35fr_.65fr]">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#ff7969]">NOT ANOTHER SWIPE APP</p>
-            <h3 className="mt-4 max-w-3xl font-serif text-5xl leading-[.86] tracking-[-0.055em] md:text-7xl">Make the first thing memorable.</h3>
+            <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[.17em] text-[#f5b4c6]">
+              <Heart className="h-3.5 w-3.5 fill-current" /> maybe this is your sign
+            </div>
+            <h3 className="mt-4 max-w-3xl text-5xl font-semibold leading-[.9] tracking-[-.055em] md:text-7xl">
+              less swiping.<br/><span className="font-serif italic text-[#d9cdf8]">more butterflies.</span>
+            </h3>
           </div>
-          <div className="flex flex-col justify-between gap-7 md:items-end">
-            <Link href="/signup" data-cursor-label="JOIN" className="inline-flex h-14 items-center rounded-full bg-[#d8ff62] px-6 font-bold text-[#161616]">Join MYSTERY <ArrowUpRight className="ml-2 h-4 w-4"/></Link>
+
+          <div className="flex flex-col justify-between gap-8 md:items-end">
+            <Link href="/signup" className="inline-flex h-14 items-center rounded-full bg-[#f7bfd0] px-6 font-bold text-[#4a3945] transition hover:-translate-y-0.5">
+              find my person <Sparkles className="ml-2 h-4 w-4" />
+            </Link>
             <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm text-white/55">
-              <Link href="/safety" className="hover:text-white">Safety</Link><Link href="/privacy" className="hover:text-white">Privacy</Link>
-              <Link href="/guidelines" className="hover:text-white">Guidelines</Link><Link href="/terms" className="hover:text-white">Terms</Link>
+              <Link href="/safety" className="hover:text-white">Safety</Link>
+              <Link href="/privacy" className="hover:text-white">Privacy</Link>
+              <Link href="/guidelines" className="hover:text-white">Guidelines</Link>
+              <Link href="/terms" className="hover:text-white">Terms</Link>
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-4 py-6 text-xs font-medium uppercase tracking-[0.16em] text-white/35 sm:flex-row sm:items-center sm:justify-between">
+
+        <div className="flex flex-col gap-4 py-6 text-xs font-medium text-white/40 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} MYSTERY</p>
-          <p>Conversation first · reveal later</p>
-        </div>
-        <div className="overflow-hidden border-t border-white/15 pt-2">
-          <p className="translate-y-[15%] whitespace-nowrap font-serif text-[clamp(5rem,18vw,17rem)] leading-none tracking-[-0.075em] text-[#f5f0e7]">MYSTERY</p>
+          <p>conversation first · reveal when it feels right ♡</p>
         </div>
       </div>
     </footer>

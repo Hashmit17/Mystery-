@@ -1,55 +1,69 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { EyeOff, LockKeyhole, Mic2, Sparkles } from "lucide-react";
+import { EyeOff, Heart, LockKeyhole, Mic2 } from "lucide-react";
 
-const MORNING = "https://images.unsplash.com/photo-1758522485066-be71f3486e0b?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=75&w=1800";
+const MORNING = "https://images.unsplash.com/photo-1758522485066-be71f3486e0b?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=80&w=1800";
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="px-4 py-10 md:px-6 md:py-16">
-      <div className="mx-auto max-w-[1500px] overflow-hidden rounded-[38px] bg-[#161616] p-5 text-[#f5f0e7] md:p-8 lg:p-10">
-        <div className="grid gap-5 lg:grid-cols-[1.15fr_.85fr]">
+    <section id="features" className="px-4 py-12 md:px-6 md:py-18">
+      <div className="mx-auto max-w-[1400px]">
+        <div className="grid gap-5 lg:grid-cols-[1.1fr_.9fr]">
           <motion.div
-            initial={{ opacity: 0, y: 22 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.25 }}
-            className="relative min-h-[640px] overflow-hidden rounded-[30px]"
+            viewport={{ once: true, amount: .25 }}
+            className="relative min-h-[640px] overflow-hidden rounded-[36px] bg-[#f6dbe4] p-4 shadow-[0_22px_60px_rgba(92,65,80,.08)]"
           >
-            <img src={MORNING} alt="Two people sharing a quiet morning conversation" className="absolute inset-0 h-full w-full object-cover" />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(22,22,22,.08),rgba(22,22,22,.16)_45%,rgba(22,22,22,.9)_100%)]" />
-            <div className="absolute left-5 top-5 rounded-full bg-[#d8ff62] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-[#161616]">NO PERFORMANCE REQUIRED</div>
-            <div className="absolute bottom-0 p-6 md:p-9">
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/50">THE EXPERIENCE</p>
-              <h2 className="mt-4 max-w-xl font-serif text-5xl leading-[.86] tracking-[-0.05em] md:text-7xl">Dating that feels less like an audition.</h2>
+            <img src={MORNING} alt="Two people sharing a quiet conversation" className="h-full min-h-[608px] w-full rounded-[28px] object-cover" />
+            <div className="absolute inset-4 rounded-[28px] bg-gradient-to-t from-[#4d3744]/70 via-transparent to-transparent" />
+            <span className="absolute left-8 top-8 -rotate-2 rounded-full bg-[#fff8cf] px-4 py-2 text-xs font-black text-[#785f35] shadow-sm">
+              low pressure, high chemistry ♡
+            </span>
+            <div className="absolute bottom-10 left-9 right-9 text-white">
+              <p className="text-xs font-black uppercase tracking-[.18em] text-white/70">the whole point</p>
+              <h2 className="mt-3 max-w-2xl text-5xl font-semibold leading-[.9] tracking-[-.055em] md:text-7xl">
+                date like nobody’s grading you.
+              </h2>
             </div>
           </motion.div>
 
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
-            <motion.div initial={{ opacity: 0, x: 18 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="rounded-[30px] bg-[#6d5dfc] p-6 md:p-8">
-              <div className="flex items-center justify-between"><Mic2 className="h-6 w-6"/><span className="text-xs font-bold uppercase tracking-[0.18em] text-white/55">VOICE / 02</span></div>
-              <h3 className="mt-16 font-serif text-4xl leading-[.92] md:text-5xl">Hear the person, not the pitch.</h3>
-              <p className="mt-4 max-w-md text-white/70">A scheduled voice date gives the conversation somewhere to go before anything gets revealed.</p>
+          <div className="grid gap-5">
+            <motion.div
+              initial={{ opacity: 0, x: 18 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="rounded-[34px] bg-[#e8defa] p-7 md:p-9"
+            >
+              <div className="flex items-center justify-between">
+                <span className="grid h-12 w-12 place-items-center rounded-full bg-white/70 text-[#6c5793]"><Mic2 className="h-5 w-5" /></span>
+                <span className="text-xs font-black uppercase tracking-[.16em] text-[#8c78aa]">voice dates</span>
+              </div>
+              <h3 className="mt-16 max-w-lg text-4xl font-bold leading-[.96] tracking-[-.045em] text-[#51425f] md:text-5xl">
+                hear the laugh before the hard launch.
+              </h3>
+              <p className="mt-4 max-w-md leading-7 text-[#786987]">A scheduled voice date keeps things intimate without making it intense.</p>
             </motion.div>
 
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-2">
-              <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-[30px] bg-[#f5f0e7] p-6 text-[#161616]">
-                <EyeOff className="h-6 w-6" />
-                <p className="mt-12 font-serif text-3xl leading-[.95]">Photos are earned, not assumed.</p>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-[30px] bg-[#fff0c9] p-6">
+                <EyeOff className="h-6 w-6 text-[#8a6b39]" />
+                <p className="mt-12 text-2xl font-bold leading-tight tracking-[-.03em] text-[#5d4a2d]">photos can wait. personality can’t.</p>
               </motion.div>
-              <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: .06 }} className="rounded-[30px] bg-[#ff5f4d] p-6 text-[#161616]">
-                <LockKeyhole className="h-6 w-6" />
-                <p className="mt-12 font-serif text-3xl leading-[.95]">Mutual reveal. No one-sided unlocks.</p>
+              <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: .05 }} className="rounded-[30px] bg-[#f9dce5] p-6">
+                <LockKeyhole className="h-6 w-6 text-[#9d6276]" />
+                <p className="mt-12 text-2xl font-bold leading-tight tracking-[-.03em] text-[#684752]">reveal only when it’s mutual.</p>
               </motion.div>
             </div>
 
-            <motion.div initial={{ opacity: 0, x: 18 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="flex items-center justify-between rounded-[30px] border border-white/15 p-6 md:p-8">
+            <div className="flex items-center justify-between rounded-[30px] border border-[#eadbe1] bg-white/70 p-6 backdrop-blur-md">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/45">THE POINT</p>
-                <p className="mt-2 text-2xl font-medium">One memorable connection &gt; endless options.</p>
+                <p className="text-xs font-black uppercase tracking-[.16em] text-[#a27c8d]">green flag energy</p>
+                <p className="mt-1 text-xl font-bold text-[#56414c]">one good connection &gt; 200 maybes</p>
               </div>
-              <Sparkles className="h-7 w-7 text-[#d8ff62]" />
-            </motion.div>
+              <Heart className="h-6 w-6 fill-[#f3a6ba] text-[#f3a6ba]" />
+            </div>
           </div>
         </div>
       </div>
