@@ -32,7 +32,13 @@ export async function POST(req: Request) {
     const visibility = ["public", "paused"].includes(String(body.visibility)) ? String(body.visibility) : "public";
     const bio = String(body.bio ?? "").trim().slice(0, 500);
     const interests: string[] = Array.isArray(body.interests)
-      ? [...new Set(body.interests.map((x: unknown) => String(x).trim()).filter(Boolean))].slice(0, 12)
+      ? Array.from(
+          new Set<string>(
+            body.interests
+              .map((x: unknown): string => String(x).trim())
+              .filter((x: string) => x.length > 0)
+          )
+        ).slice(0, 12)
       : [];
     const responses = Array.isArray(body.personalityResponses)
       ? body.personalityResponses
