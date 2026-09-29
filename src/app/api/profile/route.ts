@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/session";
+import { normalizeGender, normalizeInterestedGenders } from "@/lib/matching";
 
 function normalizeAge(value: unknown, fallback: number) {
   const n = Number(value);
@@ -27,6 +28,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const displayName = String(body.displayName ?? "").trim();
     const age = normalizeAge(body.age, 18);
+    const gender = normalizeGender(body.gender);
     const broadLocation = String(body.broadLocation ?? "").trim();
     const relationshipGoals = String(body.relationshipGoals ?? "Meaningful connection").trim().slice(0, 80);
     const visibility = ["public", "paused"].includes(String(body.visibility)) ? String(body.visibility) : "public";
@@ -53,8 +55,11 @@ export async function POST(req: Request) {
     const minAge = normalizeAge(prefs.minAge, 18);
     const maxAge = Math.max(minAge, normalizeAge(prefs.maxAge, 99));
     const distance = Math.max(1, Math.min(100, Number(prefs.distance ?? prefs.discoveryDistance ?? 50) || 50));
+    const interestedGenders = normalizeInterestedGenders(prefs.interestedGenders);
 
     if (!displayName) return new NextResponse("Display name is required", { status: 400 });
+    if (!gender) return new NextResponse("Choose your gender to continue", { status: 400 });
+    if (!interestedGenders.length) return new NextResponse("Choose at least one gender you want to date", { status: 400 });
 
     const profile = await prisma.$transaction(async (tx) => {
       const saved = await tx.profile.upsert({
@@ -62,6 +67,7 @@ export async function POST(req: Request) {
         update: {
           displayName,
           age,
+          gender,
           bio: bio || null,
           broadLocation: broadLocation || null,
           relationshipGoals,
@@ -76,6 +82,7 @@ export async function POST(req: Request) {
           userId,
           displayName,
           age,
+          gender,
           bio: bio || null,
           broadLocation: broadLocation || null,
           relationshipGoals,
@@ -96,8 +103,19 @@ export async function POST(req: Request) {
 
       await tx.preference.upsert({
         where: { profileId: saved.id },
-        update: { minAge, maxAge, discoveryDistance: distance },
-        create: { profileId: saved.id, minAge, maxAge, discoveryDistance: distance },
+        update: {
+          minAge,
+          maxAge,
+          discoveryDistance: distance,
+          interestedGenders: JSON.stringify(interestedGenders),
+        },
+        create: {
+          profileId: saved.id,
+          minAge,
+          maxAge,
+          discoveryDistance: distance,
+          interestedGenders: JSON.stringify(interestedGenders),
+        },
       });
 
       return tx.profile.findUnique({

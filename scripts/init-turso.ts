@@ -25,5 +25,17 @@ for (const statement of statements) {
   await client.execute(statement);
 }
 
+async function ensureColumn(table: string, column: string, definition: string) {
+  const result = await client.execute(`PRAGMA table_info("${table}")`);
+  const exists = result.rows.some((row) => String(row.name) === column);
+  if (!exists) {
+    await client.execute(`ALTER TABLE "${table}" ADD COLUMN "${column}" ${definition}`);
+    console.log(`Added ${table}.${column}`);
+  }
+}
+
+await ensureColumn("Profile", "gender", "TEXT");
+await ensureColumn("Preference", "interestedGenders", "TEXT NOT NULL DEFAULT '[]'");
+
 console.log(`Initialized Turso schema (${statements.length} statements).`);
 client.close();

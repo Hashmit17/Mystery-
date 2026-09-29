@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS "Profile" (
   "userId" TEXT NOT NULL,
   "displayName" TEXT NOT NULL,
   "age" INTEGER NOT NULL,
+  "gender" TEXT,
   "bio" TEXT,
   "broadLocation" TEXT,
   "visibility" TEXT NOT NULL DEFAULT 'public',
@@ -88,6 +89,7 @@ CREATE TABLE IF NOT EXISTS "Preference" (
   "maxAge" INTEGER NOT NULL DEFAULT 99,
   "discoveryDistance" INTEGER NOT NULL DEFAULT 50,
   "visibilitySettings" TEXT NOT NULL DEFAULT 'standard',
+  "interestedGenders" TEXT NOT NULL DEFAULT '[]',
   CONSTRAINT "Preference_profileId_fkey" FOREIGN KEY ("profileId") REFERENCES "Profile"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 

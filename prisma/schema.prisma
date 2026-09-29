@@ -59,6 +59,7 @@ model Profile {
   userId            String   @unique
   displayName       String
   age               Int
+  gender            String?
   bio               String?
   broadLocation     String?
   visibility        String   @default("public")
@@ -84,6 +85,7 @@ model PersonalityResponse {
   answer    String
 
   profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
 }
 
 model Preference {
@@ -93,6 +95,7 @@ model Preference {
   maxAge             Int    @default(99)
   discoveryDistance  Int    @default(50)
   visibilitySettings String @default("standard")
+  interestedGenders  String @default("[]")
 
   profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 }
