@@ -5,10 +5,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowUpRight } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -21,13 +18,7 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
-
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
-
+    const result = await signIn("credentials", { email, password, redirect: false });
     if (result?.error) {
       setError("Invalid email or password");
       setLoading(false);
@@ -37,76 +28,36 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[128px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-[128px]" />
-      </div>
+    <main className="min-h-screen bg-[#f5f0e7] p-3 md:p-5">
+      <div className="mx-auto grid min-h-[calc(100vh-1.5rem)] max-w-[1500px] overflow-hidden rounded-[34px] border-2 border-[#161616] lg:grid-cols-[.9fr_1.1fr] md:min-h-[calc(100vh-2.5rem)]">
+        <section className="flex flex-col justify-between bg-[#161616] p-7 text-white md:p-10">
+          <Link href="/" className="font-serif text-2xl font-bold">MYSTERY<span className="text-[#ff5f4d]">.</span></Link>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#d8ff62]">WELCOME BACK</p>
+            <h1 className="mt-4 max-w-xl font-serif text-6xl leading-[.82] tracking-[-0.06em] md:text-8xl">Pick up the conversation.</h1>
+          </div>
+          <p className="max-w-sm text-sm leading-6 text-white/45">No feeds. No popularity contest. Just the people you actually chose to know.</p>
+        </section>
 
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md z-10"
-      >
-        <Card className="glass-elevated border-white/10 shadow-2xl">
-          <CardHeader className="space-y-1 text-center">
-            <Link href="/">
-              <span className="text-2xl font-bold tracking-[0.2em] text-white mx-auto block mb-4">MYSTERY</span>
-            </Link>
-            <CardTitle className="text-2xl font-semibold text-white">Welcome back</CardTitle>
-            <CardDescription className="text-muted-foreground">
-              Enter your credentials to access your account
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={onSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-gray-300">Email</Label>
-                <Input 
-                  id="email" 
-                  type="email" 
-                  placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="bg-black/20 border-white/10 text-white placeholder:text-gray-500 focus-visible:ring-primary"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-gray-300">Password</Label>
-                  <Link href="/forgot-password" className="text-xs text-primary hover:underline">
-                    Forgot password?
-                  </Link>
-                </div>
-                <Input 
-                  id="password" 
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="bg-black/20 border-white/10 text-white placeholder:text-gray-500 focus-visible:ring-primary"
-                  required
-                />
-              </div>
-              
-              {error && <p className="text-sm text-destructive text-center font-medium">{error}</p>}
-              
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-white" disabled={loading}>
-                {loading ? "Signing in..." : "Sign In"}
-              </Button>
-            </form>
-          </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
-            <div className="text-sm text-muted-foreground text-center">
-              Don't have an account?{" "}
-              <Link href="/signup" className="text-primary hover:underline font-medium">
-                Create one
-              </Link>
+        <section className="grid place-items-center bg-[#ff5f4d] p-6 md:p-10">
+          <motion.form initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} onSubmit={onSubmit} className="w-full max-w-lg rounded-[30px] bg-[#f5f0e7] p-7 shadow-[12px_12px_0_#161616] md:p-9">
+            <div className="mb-8">
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#6d5dfc]">LOG IN</p>
+              <h2 className="mt-2 font-serif text-5xl tracking-[-0.05em] text-[#161616]">Good to see you.</h2>
             </div>
-          </CardFooter>
-        </Card>
-      </motion.div>
-    </div>
+            <label className="block text-sm font-bold text-[#161616]">Email
+              <input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} required className="mt-2 h-13 w-full rounded-2xl border-2 border-[#161616] bg-transparent px-4 outline-none focus:bg-white" placeholder="name@example.com" />
+            </label>
+            <label className="mt-5 block text-sm font-bold text-[#161616]">Password
+              <input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} required className="mt-2 h-13 w-full rounded-2xl border-2 border-[#161616] bg-transparent px-4 outline-none focus:bg-white" />
+            </label>
+            <div className="mt-3 text-right"><Link href="/forgot-password" className="text-xs font-bold text-[#6d5dfc] hover:underline">Forgot password?</Link></div>
+            {error && <p className="mt-4 text-sm font-bold text-[#d22f28]">{error}</p>}
+            <button disabled={loading} className="mt-6 flex h-14 w-full items-center justify-center rounded-full bg-[#161616] font-bold text-white transition hover:-translate-y-0.5 disabled:opacity-60">{loading ? "Signing in…" : <>Enter MYSTERY <ArrowUpRight className="ml-2 h-4 w-4"/></>}</button>
+            <p className="mt-6 text-center text-sm text-[#6b655e]">New here? <Link href="/signup" className="font-bold text-[#161616] underline">Create an account</Link></p>
+          </motion.form>
+        </section>
+      </div>
+    </main>
   );
 }

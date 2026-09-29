@@ -4,88 +4,88 @@ import { useEffect, useRef } from "react";
 
 export function CursorTrackingBackground() {
   const stageRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const stage = stageRef.current;
-    if (!stage) return;
+    const label = labelRef.current;
+    if (!stage || !label || window.matchMedia("(pointer: coarse)").matches) return;
 
-    let targetX = window.innerWidth * 0.5;
-    let targetY = window.innerHeight * 0.36;
-    let x = targetX;
-    let y = targetY;
-    let trailX = targetX;
-    let trailY = targetY;
-    let haloX = targetX;
-    let haloY = targetY;
+    let tx = window.innerWidth / 2;
+    let ty = window.innerHeight / 2;
+    let x = tx;
+    let y = ty;
+    let fx = tx;
+    let fy = ty;
+    let px = tx;
+    let py = ty;
     let frame = 0;
 
-    const paint = () => {
-      x += (targetX - x) * 0.2;
-      y += (targetY - y) * 0.2;
-      trailX += (targetX - trailX) * 0.075;
-      trailY += (targetY - trailY) * 0.075;
-      haloX += (targetX - haloX) * 0.12;
-      haloY += (targetY - haloY) * 0.12;
+    const tick = () => {
+      x += (tx - x) * 0.38;
+      y += (ty - y) * 0.38;
+      fx += (tx - fx) * 0.14;
+      fy += (ty - fy) * 0.14;
 
-      stage.style.setProperty("--cursor-x", `${x}px`);
-      stage.style.setProperty("--cursor-y", `${y}px`);
-      stage.style.setProperty("--trail-x", `${trailX}px`);
-      stage.style.setProperty("--trail-y", `${trailY}px`);
-      stage.style.setProperty("--halo-x", `${haloX}px`);
-      stage.style.setProperty("--halo-y", `${haloY}px`);
-      stage.style.setProperty(
-        "--grid-x",
-        `${((x / Math.max(window.innerWidth, 1)) - 0.5) * 26}px`
-      );
-      stage.style.setProperty(
-        "--grid-y",
-        `${((y / Math.max(window.innerHeight, 1)) - 0.5) * 26}px`
-      );
-      frame = requestAnimationFrame(paint);
+      const dx = x - px;
+      const dy = y - py;
+      const speed = Math.min(Math.hypot(dx, dy), 28);
+      const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+      px = x;
+      py = y;
+
+      stage.style.setProperty("--cx", `${x}px`);
+      stage.style.setProperty("--cy", `${y}px`);
+      stage.style.setProperty("--fx", `${fx}px`);
+      stage.style.setProperty("--fy", `${fy}px`);
+      stage.style.setProperty("--angle", `${angle}deg`);
+      stage.style.setProperty("--stretch", `${1 + speed * .018}`);
+      frame = requestAnimationFrame(tick);
     };
 
-    const setTarget = (clientX: number, clientY: number) => {
-      targetX = clientX;
-      targetY = clientY;
+    const move = (event: PointerEvent) => {
+      if (event.pointerType === "touch") return;
+      tx = event.clientX;
+      ty = event.clientY;
       stage.dataset.active = "true";
     };
 
-    const onPointerMove = (event: PointerEvent) => {
-      if (event.pointerType !== "touch") setTarget(event.clientX, event.clientY);
+    const over = (event: PointerEvent) => {
+      const target = event.target instanceof Element ? event.target.closest("a,button,input,textarea,[role='button']") : null;
+      stage.dataset.interactive = target ? "true" : "false";
+      label.textContent = target?.getAttribute("data-cursor-label") ?? (target ? "OPEN" : "");
     };
-    const onMouseMove = (event: MouseEvent) => setTarget(event.clientX, event.clientY);
-    const onLeave = () => {
-      stage.dataset.active = "false";
-    };
-    const onEnter = (event: MouseEvent) => setTarget(event.clientX, event.clientY);
 
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-    window.addEventListener("mousemove", onMouseMove, { passive: true });
-    document.documentElement.addEventListener("mouseleave", onLeave);
-    document.documentElement.addEventListener("mouseenter", onEnter);
+    const down = () => { stage.dataset.pressed = "true"; };
+    const up = () => { stage.dataset.pressed = "false"; };
+    const leave = () => { stage.dataset.active = "false"; };
+
+    window.addEventListener("pointermove", move, { passive: true });
+    window.addEventListener("pointerover", over, { passive: true });
+    window.addEventListener("pointerdown", down, { passive: true });
+    window.addEventListener("pointerup", up, { passive: true });
+    document.documentElement.addEventListener("mouseleave", leave);
 
     stage.dataset.active = "true";
-    frame = requestAnimationFrame(paint);
+    stage.dataset.interactive = "false";
+    stage.dataset.pressed = "false";
+    frame = requestAnimationFrame(tick);
 
     return () => {
       cancelAnimationFrame(frame);
-      window.removeEventListener("pointermove", onPointerMove);
-      window.removeEventListener("mousemove", onMouseMove);
-      document.documentElement.removeEventListener("mouseleave", onLeave);
-      document.documentElement.removeEventListener("mouseenter", onEnter);
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerover", over);
+      window.removeEventListener("pointerdown", down);
+      window.removeEventListener("pointerup", up);
+      document.documentElement.removeEventListener("mouseleave", leave);
     };
   }, []);
 
   return (
     <div ref={stageRef} aria-hidden="true" className="mystery-cursor-stage">
-      <div className="mystery-cursor-aurora mystery-cursor-aurora-one" />
-      <div className="mystery-cursor-aurora mystery-cursor-aurora-two" />
-      <div className="mystery-cursor-grid" />
-      <div className="mystery-cursor-trail" />
-      <div className="mystery-cursor-primary" />
-      <div className="mystery-cursor-halo" />
-      <div className="mystery-cursor-ring" />
-      <div className="mystery-cursor-vignette" />
+      <div className="mystery-cursor-wash" />
+      <div className="mystery-cursor-follow"><span ref={labelRef} /></div>
+      <div className="mystery-cursor-core" />
     </div>
   );
 }
